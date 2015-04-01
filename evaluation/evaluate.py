@@ -188,7 +188,7 @@ class Evaluation:
                         count = np.int(counts[(counts[att_names[0]] == lev0_att)
                                             & (counts[att_names[1]] == lev1_att)]['test mean'])
                         
-                        ax_flat[plt_i].text(bar_x[bar_i]+.4, (test_mean - bottom)/3, '%d'%count,
+                        ax_flat[plt_i].text(bar_x[bar_i]+.4, (test_mean + bottom) / 2 - bottom, '%d'%count,
                                 ha='center', va='center', rotation='vertical')
 
                 ax_flat[plt_i].set_title(lev0_att)
@@ -203,6 +203,7 @@ class Evaluation:
         for plt_i in range(len(lev0),len(ax_flat)):
             ax_flat[plt_i].axis('off')
 
-        plt.figlegend(dummy_artists, [att for i, att in lev1],
-                      loc='lower right', borderaxespad=0.2, title=att_names[1])
+        legend = [(int(att) if isinstance(att, float) else att) for i, att in lev1]
+
+        plt.figlegend(dummy_artists, legend, loc='lower right', title=att_names[1])
 
