@@ -108,7 +108,10 @@ class Evaluation:
         satts = set(attributes)
         return [(i, att) for i, att in enumerate(self.order_all[attribute]) if att in satts]
 
-    def group_subplots(self, best, adapt_bottom=True, error=False, plot_range=None, no_rows=2, base=5, eps=.5, plot_fit=True, colormap='pastel1'):
+    def group_subplots(self, best, counts=None,
+                       error=False, no_rows=2,
+                       adapt_bottom=True, plot_range=None, base=5, eps=.5,
+                       plot_fit=True, colormap='pastel1'):
         """ Create a single barplot for each group of the first attribute in best.
         """
         no_subplots = len(best.index.levels[0])
@@ -123,6 +126,7 @@ class Evaluation:
         lev1 = self.bring_in_order(best.index.levels[1], att_names[1])
 
         best = best.reset_index()
+        counts = counts.reset_index()
         bar_x = np.arange(len(lev1))
         offset = 1
 
@@ -163,6 +167,12 @@ class Evaluation:
                             ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, color=c, bottom=bottom, yerr=test_std, ecolor='gray')
                     else:
                         ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, color=c, bottom=bottom)
+                    if counts is not None:
+                        count = np.int(counts[(counts[att_names[0]] == lev0_att)
+                                            & (counts[att_names[1]] == lev1_att)]['test mean'])
+                        
+                        ax_flat[plt_i].text(bar_x[bar_i]+.4, (test_mean - bottom)/3, '%d'%count,
+                                ha='center', va='center', rotation='vertical')
 
                 ax_flat[plt_i].set_title(lev0_att)
                 ax_flat[plt_i].set_xticks([])
