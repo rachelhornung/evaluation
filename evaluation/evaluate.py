@@ -30,6 +30,7 @@ class Evaluation:
             elif isdir(full_file_path) and recursive:
                 self.add_folder(full_file_path, file_method, recursive)
 
+
     def add_hdf5(self, path):
         """ Add a HDF5 file. """
 
@@ -188,7 +189,7 @@ class Evaluation:
                         count = np.int(counts[(counts[att_names[0]] == lev0_att)
                                             & (counts[att_names[1]] == lev1_att)]['test mean'])
                         
-                        ax_flat[plt_i].text(bar_x[bar_i]+.4, (test_mean + bottom) / 2 - bottom, '%d'%count,
+                        ax_flat[plt_i].text(bar_x[bar_i] + .4, (test_mean + bottom) / 2, '%d'%count,
                                 ha='center', va='center', rotation='vertical')
 
                 ax_flat[plt_i].set_title(lev0_att)
