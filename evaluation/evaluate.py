@@ -89,7 +89,8 @@ class Evaluation:
     def unfilter(self):
         self.filtered = self.results
 
-    def best_results_for(self, attributes, objective='test mean', outputs=['test mean', 'train mean', 'test std', 'train std'], fun='max'):
+    def best_results_for(self, attributes, objective='test mean', 
+                outputs=['test mean', 'train mean', 'test std', 'train std'], fun='max'):
         if fun == 'max':
             best = self.filtered.sort(objective).groupby(attributes)[outputs].last()
         elif fun == 'min':
@@ -137,36 +138,51 @@ class Evaluation:
             for bar_i, (lev1_ind, lev1_att) in enumerate(lev1):
 
                 c = cmap(np.float(lev1_ind) / len(lev1))
-                dummy_artists.append( Rectangle( ( 0, 0 ), 1, 1, fc=c ) )
+                dummy_artists.append(Rectangle((0, 0), 1, 1, fc=c))
 
                 if plot_range:
                     bottom = plot_range[0]
                     ceil = plot_range[1]
                 elif adapt_bottom:
                     relevant = best[(best[att_names[0]] == lev0_att) & -(best['test mean'] == 0)]
-
                     if error:
-                        ceil = misc.based_ceil(np.max(relevant['test mean']) + np.max(relevant['test std']) + eps, base)
-                        bottom = misc.based_floor(np.min(relevant['test mean']) - np.max(relevant['test std']) - eps, base)
+                        ceil = misc.based_ceil(np.max(relevant['test mean'])
+                                               + np.max(relevant['test std']) + eps, base)
+                        bottom = misc.based_floor(np.min(relevant['test mean'])
+                                                  - np.max(relevant['test std']) - eps, base)
                     else:
                         ceil = misc.based_ceil(np.max(relevant['test mean']) + eps, base)
                         bottom = misc.based_floor(np.min(relevant['test mean']) - eps, base)
 
-                test_mean = np.float(best[(best[att_names[0]] == lev0_att) & (best[att_names[1]] == lev1_att)]['test mean'])
-                test_std = np.float(best[(best[att_names[0]] == lev0_att) & (best[att_names[1]] == lev1_att)]['test std'])
-                train_mean = np.float(best[(best[att_names[0]] == lev0_att) & (best[att_names[1]] == lev1_att)]['train mean'])
-                train_std = np.float(best[(best[att_names[0]] == lev0_att) & (best[att_names[1]] == lev1_att)]['train std'])
-
+                test_mean = np.float(best[(best[att_names[0]] == lev0_att)
+                                          & (best[att_names[1]] == lev1_att)]['test mean'])
+                test_std = np.float(best[(best[att_names[0]] == lev0_att)
+                                          & (best[att_names[1]] == lev1_att)]['test std'])
+                train_mean = np.float(best[(best[att_names[0]] == lev0_att)
+                                          & (best[att_names[1]] == lev1_att)]['train mean'])
+                train_std = np.float(best[(best[att_names[0]] == lev0_att)
+                                          & (best[att_names[1]] == lev1_att)]['train std'])
 
                 if test_mean != 0:
                     if error:
                         if plot_fit:
-                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4, color=c, bottom=bottom, yerr=train_std, ecolor='gray', alpha=.5, linewidth=0.)
-                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4, color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4, 
+                                color=c, bottom=bottom, yerr=train_std, ecolor='gray', alpha=.5, linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4, 
+                                color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
                         else:
-                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, color=c, bottom=bottom, yerr=test_std, ecolor='gray')
+                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, 
+                                color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
                     else:
-                        ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, color=c, bottom=bottom)
+                        if plot_fit:
+                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4, 
+                                color=c, bottom=bottom, alpha=.5, linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4, 
+                                color=c, bottom=bottom, linewidth=0.)
+                        else:
+                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, 
+                                color=c, bottom=bottom, linewidth=0.)
+
                     if counts is not None:
                         count = np.int(counts[(counts[att_names[0]] == lev0_att)
                                             & (counts[att_names[1]] == lev1_att)]['test mean'])
