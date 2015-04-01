@@ -14,11 +14,13 @@ import misc
 
 class Evaluation:
 
-    def __init__(self):
+    def __init__(self, allocate=50000):
         self.results = pd.DataFrame()
         self.filtered = self.results
         self.order = {}
         self.order_all = {}
+        self.add_counter = -1
+        self.allocate = allocate
 
     def add_folder(self, path, file_method, recursive=True):
         """ Add a folder with files of a certain file type. """
@@ -44,7 +46,16 @@ class Evaluation:
             hdf_dic['train std'] = np.std(h5File[group+'/LL train'])
             hdf_dic['test mean'] = np.mean(h5File[group+'/LL test'])
             hdf_dic['test std'] = np.std(h5File[group+'/LL test'])
-            self.results = self.results.append(hdf_dic, ignore_index=True)
+            
+            # allocate large DataFrame with the right columns and initialize with nans
+            if self.add_counter<0:
+                self.results = self.results.append(hdf_dic, ignore_index=True)
+                self.results = pd.DataFrame(np.zeros([self.allocate, len(self.results.columns)]) + np.nan, 
+                columns=self.results.columns)
+                self.add_counter = 0
+            
+            self.results.iloc[self.add_counter] = pd.Series(hdf_dic)
+            self.add_counter += 1
 
         h5File.close()
         self.unfilter()
