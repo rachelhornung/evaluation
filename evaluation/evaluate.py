@@ -106,6 +106,8 @@ class Evaluation:
     def make_same(self, attribute, values):
         self.results[attribute].replace(values, values[0], inplace=True)
 
+    def rename_attribute(self, attribute, new_name):
+        self.results.rename(columns={attribute: new_name}, inplace=True)
 
     def bring_in_order(self, attributes, attribute):
         satts = set(attributes)
