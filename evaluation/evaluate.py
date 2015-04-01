@@ -43,7 +43,7 @@ class Evaluation:
             hdf_dic['train std'] = np.std(h5File[group+'/LL train'])
             hdf_dic['test mean'] = np.mean(h5File[group+'/LL test'])
             hdf_dic['test std'] = np.std(h5File[group+'/LL test'])
-            self.results = self.results.append(hdf_dic, ignore_index = True)
+            self.results = self.results.append(hdf_dic, ignore_index=True)
 
         h5File.close()
         self.unfilter()
@@ -90,7 +90,8 @@ class Evaluation:
         self.filtered = self.results
 
     def best_results_for(self, attributes, objective='test mean', 
-                outputs=['test mean', 'train mean', 'test std', 'train std'], fun='max'):
+                outputs=['test mean', 'train mean', 'test std', 'train std'],
+                fun='max'):
         if fun == 'max':
             best = self.filtered.sort(objective).groupby(attributes)[outputs].last()
         elif fun == 'min':
@@ -99,11 +100,11 @@ class Evaluation:
             best = self.filtered.groupby(attributes)[outputs].mean()
         elif fun == 'count':
             best = self.filtered.groupby(attributes)[objective].count()
-
         return best
 
     def make_same(self, attribute, values):
         self.results[attribute].replace(values, values[0], inplace=True)
+
 
     def bring_in_order(self, attributes, attribute):
         satts = set(attributes)
