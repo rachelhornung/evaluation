@@ -13,7 +13,6 @@ import misc
 
 
 class Evaluation:
-
     def __init__(self, allocate=50000):
         self.results = pd.DataFrame()
         self.filtered = self.results
@@ -32,11 +31,9 @@ class Evaluation:
             elif isdir(full_file_path) and recursive:
                 self.add_folder(full_file_path, file_method, recursive)
 
-
     def add_hdf5(self, path):
         """ Add a HDF5 file. """
         h5File = h5py.File(path, 'r')
-
 
         for group in h5File:
             hdf_dic = {}
@@ -53,7 +50,7 @@ class Evaluation:
                 self.results = pd.DataFrame(np.zeros([self.allocate, len(self.results.columns)]) + np.nan,
                                             columns=self.results.columns)
                 self.add_counter = 0
-            
+
             self.results.iloc[self.add_counter] = pd.Series(hdf_dic)
             self.add_counter += 1
 
