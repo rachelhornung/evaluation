@@ -94,6 +94,8 @@ class Evaluation:
         elif filter_type is ('>=' or 'ge'):
             self.filtered = self.filtered[self.filtered[attribute] >= values]
         elif filter_type is 'not':
+            if not isinstance(values, list):
+                values = [values]
             self.filtered = self.filtered[-self.filtered[attribute].isin(values)]
         else:
             warnings.warn('Filter type unknown. No filter was applied.', UserWarning)
