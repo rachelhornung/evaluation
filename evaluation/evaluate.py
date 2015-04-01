@@ -103,6 +103,16 @@ class Evaluation:
     def unfilter(self):
         self.filtered = self.results
 
+    def convert_flags(self, flags=['rectified', 'scaled', 'whitened'], name='flags'):
+        self.results[name] = ''
+        for flag in flags:
+            self.results[name] += self.results['flag'] * flag
+
+    def convert_flags_abbr(self, flags=['rectified', 'scaled', 'whitened'], name='flags'):
+        self.results[name] = ''
+        for flag in flags:
+            self.results[name] += self.results['flag'] * flag[0]
+
     def best_results_for(self, attributes, objective='test mean',
                          outputs=['test mean', 'train mean', 'test std', 'train std'],
                          fun='max'):
