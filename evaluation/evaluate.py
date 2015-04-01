@@ -35,23 +35,23 @@ class Evaluation:
 
     def add_hdf5(self, path):
         """ Add a HDF5 file. """
+        h5File = h5py.File(path, 'r')
 
-        h5File = h5py.File(path, 'r' )
 
         for group in h5File:
             hdf_dic = {}
             for att in h5File[group].attrs:
                 hdf_dic[att] = h5File[group].attrs[att]
-            hdf_dic['train mean'] = np.mean(h5File[group+'/LL train'])
-            hdf_dic['train std'] = np.std(h5File[group+'/LL train'])
-            hdf_dic['test mean'] = np.mean(h5File[group+'/LL test'])
-            hdf_dic['test std'] = np.std(h5File[group+'/LL test'])
-            
-            # allocate large DataFrame with the right columns and initialize with nans
-            if self.add_counter<0:
+            hdf_dic['train mean'] = np.mean(h5File[group + '/LL train'])
+            hdf_dic['train std'] = np.std(h5File[group + '/LL train'])
+            hdf_dic['test mean'] = np.mean(h5File[group + '/LL test'])
+            hdf_dic['test std'] = np.std(h5File[group + '/LL test'])
+
+            # allocate large DataFrame and initialize with nans
+            if self.add_counter < 0:
                 self.results = self.results.append(hdf_dic, ignore_index=True)
-                self.results = pd.DataFrame(np.zeros([self.allocate, len(self.results.columns)]) + np.nan, 
-                columns=self.results.columns)
+                self.results = pd.DataFrame(np.zeros([self.allocate, len(self.results.columns)]) + np.nan,
+                                            columns=self.results.columns)
                 self.add_counter = 0
             
             self.results.iloc[self.add_counter] = pd.Series(hdf_dic)
@@ -103,9 +103,9 @@ class Evaluation:
     def unfilter(self):
         self.filtered = self.results
 
-    def best_results_for(self, attributes, objective='test mean', 
-                outputs=['test mean', 'train mean', 'test std', 'train std'],
-                fun='max'):
+    def best_results_for(self, attributes, objective='test mean',
+                         outputs=['test mean', 'train mean', 'test std', 'train std'],
+                         fun='max'):
         if fun == 'max':
             best = self.filtered.sort(objective).groupby(attributes)[outputs].last()
         elif fun == 'min':
@@ -184,29 +184,30 @@ class Evaluation:
                 if test_mean != 0:
                     if error:
                         if plot_fit:
-                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4, 
-                                color=c, bottom=bottom, yerr=train_std, ecolor='gray', alpha=.5, linewidth=0.)
-                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4, 
-                                color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4,
+                                               color=c, bottom=bottom, yerr=train_std, ecolor='gray', alpha=.5,
+                                               linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4,
+                                               color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
                         else:
-                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, 
-                                color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom,
+                                               color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
                     else:
                         if plot_fit:
-                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4, 
-                                color=c, bottom=bottom, alpha=.5, linewidth=0.)
-                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4, 
-                                color=c, bottom=bottom, linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4,
+                                               color=c, bottom=bottom, alpha=.5, linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4,
+                                               color=c, bottom=bottom, linewidth=0.)
                         else:
-                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom, 
-                                color=c, bottom=bottom, linewidth=0.)
+                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom,
+                                               color=c, bottom=bottom, linewidth=0.)
 
                     if counts is not None:
                         count = np.int(counts[(counts[att_names[0]] == lev0_att)
-                                            & (counts[att_names[1]] == lev1_att)]['test mean'])
-                        
-                        ax_flat[plt_i].text(bar_x[bar_i] + .4, (test_mean + bottom) / 2, '%d'%count,
-                                ha='center', va='center', rotation='vertical')
+                                              & (counts[att_names[1]] == lev1_att)]['test mean'])
+
+                        ax_flat[plt_i].text(bar_x[bar_i] + .4, (test_mean + bottom) / 2, '%d' % count,
+                                            ha='center', va='center', rotation='vertical')
 
                 ax_flat[plt_i].set_title(lev0_att)
                 ax_flat[plt_i].set_xticks([])
@@ -217,7 +218,7 @@ class Evaluation:
                 ax_flat[plt_i].spines['left'].set_color('gray')
                 ax_flat[plt_i].spines['bottom'].set_color('gray')
 
-        for plt_i in range(len(lev0),len(ax_flat)):
+        for plt_i in range(len(lev0), len(ax_flat)):
             ax_flat[plt_i].axis('off')
 
         legend = [(int(att) if isinstance(att, float) else att) for i, att in lev1]
