@@ -172,14 +172,14 @@ class Evaluation:
                         ceil = misc.based_ceil(np.max(relevant['test mean']) + eps, base)
                         bottom = misc.based_floor(np.min(relevant['test mean']) - eps, base)
 
-                test_mean = np.float(best[(best[att_names[0]] == lev0_att)
-                                          & (best[att_names[1]] == lev1_att)]['test mean'])
-                test_std = np.float(best[(best[att_names[0]] == lev0_att)
-                                          & (best[att_names[1]] == lev1_att)]['test std'])
-                train_mean = np.float(best[(best[att_names[0]] == lev0_att)
-                                          & (best[att_names[1]] == lev1_att)]['train mean'])
-                train_std = np.float(best[(best[att_names[0]] == lev0_att)
-                                          & (best[att_names[1]] == lev1_att)]['train std'])
+                test_mean = misc.float(best[(best[att_names[0]] == lev0_att)
+                                            & (best[att_names[1]] == lev1_att)]['test mean'])
+                test_std = misc.float(best[(best[att_names[0]] == lev0_att)
+                                           & (best[att_names[1]] == lev1_att)]['test std'])
+                train_mean = misc.float(best[(best[att_names[0]] == lev0_att)
+                                             & (best[att_names[1]] == lev1_att)]['train mean'])
+                train_std = misc.float(best[(best[att_names[0]] == lev0_att)
+                                            & (best[att_names[1]] == lev1_att)]['train std'])
 
                 if test_mean != 0:
                     if error:

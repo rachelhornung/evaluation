@@ -17,6 +17,10 @@ def based_ceil(x, base=10):
     return np.int(base * np.ceil(np.float(x) / base))
 
 
+def float(x):
+    return np.float(x) if len(x) > 0 else np.nan
+
+
 class LabelEncoderResorted():
     '''
     encodes labels without sorting them
