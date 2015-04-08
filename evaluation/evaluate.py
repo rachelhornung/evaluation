@@ -100,36 +100,36 @@ class Evaluation:
     def unfilter(self):
         self.filtered = self.results
 
-    def convert_flags(self, flags=['rectified', 'scaled', 'whitened'], name='flags',default='raw'):
-        self.results.loc[:,name] = ''
+    def convert_flags(self, flags=['rectified', 'scaled', 'whitened'], name='flags', default='raw'):
+        self.results.loc[:, name] = ''
         try:
             for flag in flags:
                 self.results[name] += self.results[flag] * flag
         except:
             for flag in flags:
-                k=self.results[flag].copy()
-                k[k!=0]=flag
-                k[k==0]=''
-                self.results.loc[:,name] += k
-        k=self.results[name].copy()
-        k[k=='']=default
-        self.results.loc[:,name]=k
+                single_flag = self.results[flag].copy()
+                single_flag[single_flag != 0] = flag
+                single_flag[single_flag == 0] = ''
+                self.results.loc[:, name] += single_flag
+        single_flag = self.results[name].copy()
+        single_flag[single_flag == ''] = default
+        self.results.loc[:, name] = single_flag
 
-    def convert_flags_abbr(self, flags=['rectified', 'scaled', 'whitened'], name='flags',default='raw'):
-        self.results.loc[:,name] = ''
+    def convert_flags_abbr(self, flags=['rectified', 'scaled', 'whitened'], name='flags', default='raw'):
+        self.results.loc[:, name] = ''
 
         try:
             for flag in flags:
                 self.results[name] += self.results[flag] * flag[0]
         except:
             for flag in flags:
-                k=self.results[flag].copy()
-                k[k!=0]=flag[0]
-                k[k==0]=''
-                self.results.loc[:,name] += k
-        k=self.results[name].copy()
-        k[k=='']=default
-        self.results.loc[:,name]=k
+                single_flag = self.results[flag].copy()
+                single_flag[single_flag != 0] = flag[0]
+                single_flag[single_flag == 0] = ''
+                self.results.loc[:, name] += single_flag
+        single_flag = self.results[name].copy()
+        single_flag[single_flag == ''] = default
+        self.results.loc[:, name] = single_flag
 
 
     def best_results_for(self, attributes, objective='test mean',
