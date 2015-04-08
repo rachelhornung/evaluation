@@ -100,26 +100,36 @@ class Evaluation:
     def unfilter(self):
         self.filtered = self.results
 
-    def convert_flags(self, flags=['rectified', 'scaled', 'whitened'], name='flags'):
-        self.results[name] = ''
+    def convert_flags(self, flags=['rectified', 'scaled', 'whitened'], name='flags',default='raw'):
+        self.results.loc[:,name] = ''
         try:
             for flag in flags:
                 self.results[name] += self.results[flag] * flag
         except:
-            for _, line in self.results.iterrows():
-                for flag in flags:
-                    line[name] += line[flag] * flag
+            for flag in flags:
+                k=self.results[flag].copy()
+                k[k!=0]=flag
+                k[k==0]=''
+                self.results.loc[:,name] += k
+        k=self.results[name].copy()
+        k[k=='']=default
+        self.results.loc[:,name]=k
 
-    def convert_flags_abbr(self, flags=['rectified', 'scaled', 'whitened'], name='flags'):
-        self.results[name] = ''
+    def convert_flags_abbr(self, flags=['rectified', 'scaled', 'whitened'], name='flags',default='raw'):
+        self.results.loc[:,name] = ''
 
         try:
             for flag in flags:
                 self.results[name] += self.results[flag] * flag[0]
         except:
-            for _, line in self.results.iterrows():
-                for flag in flags:
-                    line[name] += line[flag] * flag[0]
+            for flag in flags:
+                k=self.results[flag].copy()
+                k[k!=0]=flag[0]
+                k[k==0]=''
+                self.results.loc[:,name] += k
+        k=self.results[name].copy()
+        k[k=='']=default
+        self.results.loc[:,name]=k
 
 
     def best_results_for(self, attributes, objective='test mean',
