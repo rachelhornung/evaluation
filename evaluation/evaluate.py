@@ -33,29 +33,28 @@ class Evaluation:
 
     def add_hdf5(self, path):
         """ Add a HDF5 file. """
-        h5File = h5py.File(path, 'r')
+        if path.endswith('.hdf5'):
+            h5File = h5py.File(path, 'r')
+            for group in h5File:
+                hdf_dic = {}
+                for att in h5File[group].attrs:
+                    hdf_dic[att] = h5File[group].attrs[att]
+                hdf_dic['train mean'] = np.mean(h5File[group + '/LL train'])
+                hdf_dic['train std'] = np.std(h5File[group + '/LL train'])
+                hdf_dic['test mean'] = np.mean(h5File[group + '/LL test'])
+                hdf_dic['test std'] = np.std(h5File[group + '/LL test'])
 
-        for group in h5File:
-            hdf_dic = {}
-            for att in h5File[group].attrs:
-                hdf_dic[att] = h5File[group].attrs[att]
-            hdf_dic['train mean'] = np.mean(h5File[group + '/LL train'])
-            hdf_dic['train std'] = np.std(h5File[group + '/LL train'])
-            hdf_dic['test mean'] = np.mean(h5File[group + '/LL test'])
-            hdf_dic['test std'] = np.std(h5File[group + '/LL test'])
+                # allocate large DataFrame and initialize with nans
+                if self.add_counter < 0:
+                    self.results = self.results.append(hdf_dic, ignore_index=True)
+                    self.results = pd.DataFrame(np.zeros([self.allocate, len(self.results.columns)]) + np.nan,
+                                                columns=self.results.columns)
+                    self.add_counter = 0
 
-            # allocate large DataFrame and initialize with nans
-            if self.add_counter < 0:
-                self.results = self.results.append(hdf_dic, ignore_index=True)
-                self.results = pd.DataFrame(np.zeros([self.allocate, len(self.results.columns)]) + np.nan,
-                                            columns=self.results.columns)
-                self.add_counter = 0
+                self.results.iloc[self.add_counter] = pd.Series(hdf_dic)
+                self.add_counter += 1
 
-            self.results.iloc[self.add_counter] = pd.Series(hdf_dic)
-            self.add_counter += 1
-
-        h5File.close()
-        self.unfilter()
+            h5File.close()
 
     def set_order(self, attribute, order):
         """
