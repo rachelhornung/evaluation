@@ -158,7 +158,8 @@ class Evaluation:
                        error=False, no_rows=2,
                        adapt_bottom=True, plot_range=None, base=5, eps=.5,
                        plot_fit=True, colormap='pastel1',
-                       legend_position='lower right', legend_pad='not implemented'):
+                       legend_position='lower right', legend_pad='not implemented',
+                       print_value='auto'):
         """ Create a single barplot for each group of the first attribute in best.
         """
         no_subplots = len(best.index.levels[0])
@@ -187,6 +188,7 @@ class Evaluation:
                 c = cmap(np.float(lev1_ind) / len(lev1))
                 dummy_artists.append(Rectangle((0, 0), 1, 1, fc=c))
 
+                # compute plot limits
                 if plot_range:
                     bottom = plot_range[0]
                     ceil = plot_range[1]
@@ -210,35 +212,52 @@ class Evaluation:
                 train_std = misc.float(best[(best[att_names[0]] == lev0_att)
                                             & (best[att_names[1]] == lev1_att)]['train std'])
 
-                if test_mean != 0:
-                    if error:
-                        if plot_fit:
+                # create bar plots
+                if (test_mean is not 0) and (test_mean is not np.nan) and (train_mean is not np.nan):
+                    if plot_fit:
+                        if error:
                             ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4,
                                                color=c, bottom=bottom, yerr=train_std, ecolor='gray', alpha=.5,
                                                linewidth=0.)
                             ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4,
                                                color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
                         else:
-                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom,
-                                               color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
-                    else:
-                        if plot_fit:
                             ax_flat[plt_i].bar(bar_x[bar_i], train_mean - bottom, .4,
                                                color=c, bottom=bottom, alpha=.5, linewidth=0.)
                             ax_flat[plt_i].bar(bar_x[bar_i] + .4, test_mean - bottom, .4,
                                                color=c, bottom=bottom, linewidth=0.)
+
+                        if print_value is True or (print_value is not False and counts is None):
+                            ax_flat[plt_i].text(bar_x[bar_i] + .25, (test_mean + bottom) / 2, '%.2f' % train_mean,
+                                            ha='center', va='top', rotation='vertical')
+
+                        if print_value is True or (print_value is not False and counts is None):
+                            ax_flat[plt_i].text(bar_x[bar_i] + .75, (test_mean + bottom) / 2, '%.2f' % test_mean,
+                                            ha='center', va='top', rotation='vertical')
+
+                    else:
+                        if error:
+                            ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom,
+                                               color=c, bottom=bottom, yerr=test_std, ecolor='gray', linewidth=0.)
                         else:
                             ax_flat[plt_i].bar(bar_x[bar_i], test_mean - bottom,
                                                color=c, bottom=bottom, linewidth=0.)
+
+                        if print_value is True or (print_value is not False and counts is None):
+                            ax_flat[plt_i].text(bar_x[bar_i] + .5, (test_mean + bottom) / 2, '%.2f' % test_mean,
+                                            ha='center', va='center', rotation='vertical')
+
 
                     # print count
                     if counts is not None:
                         count = misc.int(counts[(counts[att_names[0]] == lev0_att)
                                               & (counts[att_names[1]] == lev1_att)]['test mean'])
 
-                        if count>0:
+                        if count > 0:
                             ax_flat[plt_i].text(bar_x[bar_i] + .4, (test_mean + bottom) / 2, '%d' % count,
                                             ha='center', va='center', rotation='vertical')
+
+
 
                 ax_flat[plt_i].set_title(lev0_att)
                 ax_flat[plt_i].set_xticks([])
