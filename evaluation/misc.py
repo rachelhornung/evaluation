@@ -20,3 +20,7 @@ def based_ceil(x, base=10):
 def float(x):
     return np.float(x) if len(x) > 0 else np.nan
 
+
+def int(x):
+    return np.int(x) if len(x) > 0 else 0
+
