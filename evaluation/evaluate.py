@@ -158,7 +158,7 @@ class Evaluation:
     def group_subplots(self, best, counts=None,
                        error=False, no_rows=2,
                        adapt_bottom=True, plot_range=None, base=5, eps=.5,
-                       plot_fit=True, colormap='pastel1',
+                       plot_fit=True, colormap='pastel1', max_n_cols=10,
                        legend_position='lower right', legend_pad='not implemented'):
         """ Create a single barplot for each group of the first attribute in best.
         """
@@ -252,5 +252,9 @@ class Evaluation:
 
         legend = [(int(att) if isinstance(att, float) else att) for i, att in lev1]
 
-        plt.figlegend(dummy_artists, legend, loc=legend_position, title=att_names[1])
+        n_col=len(legend)
+        if n_col>max_n_cols:
+            n_col=int((n_col+1)/2)
+
+        plt.figlegend(dummy_artists, legend, loc=legend_position, ncol=n_col, title=att_names[1])
 
