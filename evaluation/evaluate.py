@@ -67,7 +67,7 @@ class Evaluation:
     def set_all_orders(self):
         for att in self.results.columns:
             if self.order.has_key(att):
-                if isinstance(self.order[att], dict):
+                if isinstance(self.order[att], list):
                     self.order_all[att] = self.order[att]
                 elif self.order[att] is 'ascend':
                     self.order_all[att] = np.sort(self.results[att].unique())
